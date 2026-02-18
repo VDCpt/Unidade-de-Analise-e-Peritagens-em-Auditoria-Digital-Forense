@@ -1,421 +1,365 @@
-const peritiaData = {
-    identificacao: {
-        nome: 'Demo Corp, Lda',
-        nif: '503244732',
-        pericia: 'VDC-MLS1QLX3-FVWHG',
-        plataforma: 'Bolt Operations OÜ',
-        morada: 'Vana-Lõuna 15, 10134 Tallinn, Estónia'
-    },
-    
-    contadores: {
-        ctrl: 4,
-        saft: 4,
-        fat: 0,
-        ext: 0,
-        dac7: 1,
-        total: 9
-    },
-    
-    saft: {
-        valorIliquido: 7761.67,
-        iva: 466.30,
-        valorBruto: 8227.97,
-        ficheiros: 4
-    },
-    
-    extratos: {
-        ganhosApp: 9507.51,
-        campanhas: 405.00,
-        gorjetas: 46.00,
-        portagens: 0.00,
-        taxasCancelamento: 54.60,
-        comissoes: 2388.89,
-        ficheiros: 0
-    },
-    
-    dac7: {
-        q1: 0.00,
-        q2: 0.00,
-        q3: 0.00,
-        q4: 7755.16,
-        ficheiros: 1
-    },
-    
-    calculos: {
-        brutoReal: 9507.51,
-        comissoes: 2388.89,
-        liquido: 0,
-        faturado: 239.00,
-        discrepancia: 0,
-        fossoFiscal: 0
-    },
-    
-    risco: {
-        veredicto: 'RISCO ELEVADO',
-        percentagem: 0,
-        mensagem: 'Indícios de desconformidade fiscal significativa.'
-    },
-    
-    quantum: {
-        discrepanciaBase: 0,
-        mesesComDados: 7,
-        mediaMensal: 0,
-        impactoAnual: 0,
-        quantumTotal: 0
-    }
-};
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VDC FORENSE - Sistema de Perícia Digital</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <i class="fas fa-balance-scale"></i>
+                <div class="header-title">
+                    <h1>VDC FORENSE <span class="version">v12.7</span></h1>
+                    <p class="subtitle">ISO/IEC 27037 | NIST SP 800-86 | Interpol Digital Forensics | BIG DATA</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary"><i class="fas fa-folder"></i> CASO SIMULADO</button>
+                <button class="btn btn-primary"><i class="fas fa-language"></i> EN</button>
+                <div class="session-info">
+                    <span class="session-label">SESSÃO:</span>
+                    <span class="session-id" id="sessionId">VDC-MLS1QLX3-FVWHG</span>
+                    <div class="session-date" id="sessionDate">18/02/2026 | 13:10:16</div>
+                </div>
+            </div>
+        </header>
 
-function calcularValoresCorrigidos() {
-    const comissoesExtrato = peritiaData.extratos.comissoes;
-    const brutoReal = peritiaData.extratos.ganhosApp;
-    
-    const liquidoReconstruido = brutoReal - comissoesExtrato;
-    peritiaData.calculos.liquido = liquidoReconstruido;
-    
-    const comissoesDetectadas = comissoesExtrato;
-    
-    const fossoFiscal = comissoesExtrato - peritiaData.calculos.faturado;
-    peritiaData.calculos.fossoFiscal = fossoFiscal;
-    peritiaData.calculos.discrepancia = fossoFiscal;
-    
-    const percentagemRisco = (fossoFiscal / brutoReal) * 100;
-    peritiaData.risco.percentagem = percentagemRisco;
-    
-    peritiaData.quantum.discrepanciaBase = fossoFiscal;
-    
-    const mediaMensal = fossoFiscal / peritiaData.quantum.mesesComDados;
-    peritiaData.quantum.mediaMensal = mediaMensal;
-    
-    const impactoAnual = mediaMensal * 12;
-    peritiaData.quantum.impactoAnual = impactoAnual;
-    
-    const motoristas = 98000;
-    const anos = 7;
-    const quantumTotal = impactoAnual * motoristas * anos;
-    peritiaData.quantum.quantumTotal = quantumTotal;
-    
-    return {
-        liquidoReconstruido,
-        comissoesDetectadas,
-        fossoFiscal,
-        percentagemRisco,
-        mediaMensal,
-        impactoAnual,
-        quantumTotal
-    };
-}
+        <div class="main-content">
+            <aside class="sidebar">
+                <div class="identification-panel">
+                    <h3><i class="fas fa-user-shield"></i> IDENTIFICAÇÃO DO SUJEITO PASSIVO</h3>
+                    <div class="form-group">
+                        <label>NOME / DENOMINAÇÃO SOCIAL</label>
+                        <input type="text" id="entityName" value="Demo Corp, Lda" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label># NIF</label>
+                        <input type="text" id="entityNIF" value="503244732" readonly>
+                    </div>
+                    <button class="btn btn-validate"><i class="fas fa-check"></i> VALIDAR IDENTIDADE</button>
+                    <div class="validation-status">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="validationInfo">Demo Corp, Lda | NIF: 503244732</span>
+                    </div>
+                </div>
 
-function formatarMoeda(valor) {
-    return new Intl.NumberFormat('pt-PT', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    }).format(valor);
-}
+                <div class="audit-params">
+                    <h3><i class="fas fa-cogs"></i> PARÂMETROS DE AUDITORIA FORENSE</h3>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> ANO FISCAL EM EXAME</label>
+                        <select id="fiscalYear">
+                            <option value="2024" selected>2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                        </select>
+                    </div>
 
-function formatarPercentagem(valor) {
-    return valor.toFixed(2) + '%';
-}
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> PERÍODO TEMPORAL</label>
+                        <select id="temporalPeriod">
+                            <option value="2" selected>2.º Semestre</option>
+                            <option value="1">1.º Semestre</option>
+                            <option value="annual">Anual</option>
+                        </select>
+                    </div>
 
-function atualizarInterface() {
-    const calculos = calcularValoresCorrigidos();
-    
-    document.getElementById('valorIliquidoTotal').textContent = formatarMoeda(peritiaData.saft.valorIliquido);
-    document.getElementById('totalIVA').textContent = formatarMoeda(peritiaData.saft.iva);
-    document.getElementById('valorBrutoTotal').textContent = formatarMoeda(peritiaData.saft.valorBruto);
-    document.getElementById('saftFilesCount').textContent = `${peritiaData.saft.ficheiros} ficheiros processados`;
-    
-    document.getElementById('ganhosApp').textContent = formatarMoeda(peritiaData.extratos.ganhosApp);
-    document.getElementById('campanhas').textContent = formatarMoeda(peritiaData.extratos.campanhas);
-    document.getElementById('gorjetas').textContent = formatarMoeda(peritiaData.extratos.gorjetas);
-    document.getElementById('portagens').textContent = formatarMoeda(peritiaData.extratos.portagens);
-    document.getElementById('taxasCancelamento').textContent = formatarMoeda(peritiaData.extratos.taxasCancelamento);
-    document.getElementById('comissoesExtrato').textContent = formatarMoeda(peritiaData.extratos.comissoes);
-    document.getElementById('appFilesCount').textContent = `${peritiaData.extratos.ficheiros} ficheiros processados`;
-    
-    document.getElementById('dac7Q1').textContent = formatarMoeda(peritiaData.dac7.q1);
-    document.getElementById('dac7Q2').textContent = formatarMoeda(peritiaData.dac7.q2);
-    document.getElementById('dac7Q3').textContent = formatarMoeda(peritiaData.dac7.q3);
-    document.getElementById('dac7Q4').textContent = formatarMoeda(peritiaData.dac7.q4);
-    document.getElementById('dac7FilesCount').textContent = `${peritiaData.dac7.ficheiros} ficheiro processado`;
-    
-    document.getElementById('quantumValue').textContent = formatarMoeda(calculos.quantumTotal);
-    document.getElementById('discrepanciaBase').textContent = formatarMoeda(calculos.fossoFiscal);
-    document.getElementById('mesesDados').textContent = peritiaData.quantum.mesesComDados;
-    document.getElementById('mediaMensal').textContent = formatarMoeda(calculos.mediaMensal);
-    document.getElementById('impactoAnual').textContent = formatarMoeda(calculos.impactoAnual);
-    document.getElementById('quantumTotal').textContent = formatarMoeda(calculos.quantumTotal);
-    
-    document.getElementById('riskPercentage').textContent = formatarPercentagem(calculos.percentagemRisco);
-    
-    document.getElementById('anomalyValue').textContent = formatarMoeda(calculos.fossoFiscal);
-    
-    document.getElementById('valorLiquido').textContent = formatarMoeda(calculos.liquidoReconstruido);
-    document.getElementById('comissoesDetectadas').textContent = formatarMoeda(calculos.comissoesDetectadas);
-    document.getElementById('fossoFiscal').textContent = formatarMoeda(calculos.fossoFiscal);
-    
-    document.getElementById('brutoReal').textContent = formatarMoeda(peritiaData.extratos.ganhosApp);
-    document.getElementById('comissoesSummary').textContent = formatarMoeda(calculos.comissoesDetectadas);
-    document.getElementById('liquidoSummary').textContent = formatarMoeda(calculos.liquidoReconstruido);
-    document.getElementById('faturadoSummary').textContent = formatarMoeda(peritiaData.calculos.faturado);
-    
-    document.getElementById('ctrlCount').textContent = peritiaData.contadores.ctrl;
-    document.getElementById('saftCount').textContent = peritiaData.contadores.saft;
-    document.getElementById('fatCount').textContent = peritiaData.contadores.fat;
-    document.getElementById('extCount').textContent = peritiaData.contadores.ext;
-    document.getElementById('dac7Count').textContent = peritiaData.contadores.dac7;
-}
+                    <div class="form-group">
+                        <label><i class="fas fa-laptop-code"></i> PLATAFORMA DIGITAL</label>
+                        <select id="digitalPlatform">
+                            <option value="bolt" selected>Bolt Operations OÜ</option>
+                            <option value="uber">Uber Technologies Inc.</option>
+                            <option value="glovo">Glovo App 23 SL</option>
+                        </select>
+                    </div>
+                </div>
 
-function criarGrafico() {
-    const ctx = document.getElementById('analysisChart');
-    if (!ctx) return;
-    
-    const calculos = calcularValoresCorrigidos();
-    
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['SAF-T Bruto', 'Ganhos App', 'Comissões', 'Faturado', 'DAC7 Q4', 'Líquido'],
-            datasets: [{
-                label: 'Valores (€)',
-                data: [
-                    peritiaData.saft.valorBruto,
-                    peritiaData.extratos.ganhosApp,
-                    peritiaData.extratos.comissoes,
-                    peritiaData.calculos.faturado,
-                    peritiaData.dac7.q4,
-                    calculos.liquidoReconstruido
-                ],
-                backgroundColor: [
-                    '#00d9ff',
-                    '#ff9500',
-                    '#9d4edd',
-                    '#ff4444',
-                    '#3fb950',
-                    '#00c0e0'
-                ],
-                borderColor: [
-                    '#00d9ff',
-                    '#ff9500',
-                    '#9d4edd',
-                    '#ff4444',
-                    '#3fb950',
-                    '#00c0e0'
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: '#1c2128',
-                    titleColor: '#c9d1d9',
-                    bodyColor: '#c9d1d9',
-                    borderColor: '#30363d',
-                    borderWidth: 1,
-                    padding: 12,
-                    displayColors: true,
-                    callbacks: {
-                        label: function(context) {
-                            return formatarMoeda(context.parsed.y);
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        color: '#8b949e',
-                        callback: function(value) {
-                            return value.toLocaleString('pt-PT') + ' €';
-                        }
-                    },
-                    grid: {
-                        color: '#30363d'
-                    }
-                },
-                x: {
-                    ticks: {
-                        color: '#8b949e'
-                    },
-                    grid: {
-                        color: '#30363d'
-                    }
-                }
-            }
-        }
-    });
-}
+                <div class="evidence-manager">
+                    <h3><i class="fas fa-folder-open"></i> GESTÃO DE EVIDÊNCIAS</h3>
+                    <div class="evidence-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="ctrlCount">4</span>
+                            <span class="stat-label">CTRL</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="saftCount">4</span>
+                            <span class="stat-label">SAF-T</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="fatCount">0</span>
+                            <span class="stat-label">FAT</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="extCount">0</span>
+                            <span class="stat-label">EXT</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="dac7Count">1</span>
+                            <span class="stat-label">DAC7</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-execute"><i class="fas fa-play"></i> EXECUTAR PERÍCIA</button>
+                </div>
+            </aside>
 
-function adicionarLogConsole(mensagem, tipo = 'info') {
-    const consoleOutput = document.getElementById('consoleOutput');
-    if (!consoleOutput) return;
-    
-    const timestamp = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const linha = document.createElement('div');
-    linha.className = 'console-line';
-    
-    let icone = '✓';
-    let classe = 'console-success';
-    
-    if (tipo === 'error') {
-        icone = '✗';
-        classe = 'console-error';
-    } else if (tipo === 'warning') {
-        icone = '⚠';
-        classe = 'console-warning';
-    }
-    
-    linha.innerHTML = `[${timestamp}] <span class="${classe}">${icone}</span> ${mensagem}`;
-    consoleOutput.appendChild(linha);
-    consoleOutput.scrollTop = consoleOutput.scrollHeight;
-}
+            <div class="content-area">
+                <div class="action-bar">
+                    <button class="btn btn-secondary" id="btnParecer"><i class="fas fa-file-pdf"></i> PARECER PERICIAL</button>
+                    <button class="btn btn-secondary" id="btnExport"><i class="fas fa-download"></i> EXPORTAR JSON</button>
+                    <button class="btn btn-secondary" id="btnReinit"><i class="fas fa-sync"></i> REINICIAR</button>
+                    <button class="btn btn-secondary" id="btnClearConsole"><i class="fas fa-trash"></i> LIMPAR CONSOLE</button>
+                </div>
 
-function exportarJSON() {
-    const calculos = calcularValoresCorrigidos();
-    
-    const dadosExportacao = {
-        metadata: {
-            sistema: 'VDC FORENSE v12.7',
-            sessao: peritiaData.identificacao.pericia,
-            timestamp: new Date().toISOString(),
-            hash: document.getElementById('systemHash').textContent
-        },
-        identificacao: peritiaData.identificacao,
-        contadores: peritiaData.contadores,
-        modulos: {
-            saft: peritiaData.saft,
-            extratos: peritiaData.extratos,
-            dac7: peritiaData.dac7
-        },
-        analise: {
-            brutoReal: peritiaData.extratos.ganhosApp,
-            comissoes: calculos.comissoesDetectadas,
-            liquido: calculos.liquidoReconstruido,
-            faturado: peritiaData.calculos.faturado,
-            discrepancia: calculos.fossoFiscal,
-            fossoFiscal: calculos.fossoFiscal
-        },
-        risco: {
-            veredicto: peritiaData.risco.veredicto,
-            percentagem: calculos.percentagemRisco,
-            mensagem: peritiaData.risco.mensagem
-        },
-        quantum: {
-            discrepanciaBase: calculos.fossoFiscal,
-            mesesComDados: peritiaData.quantum.mesesComDados,
-            mediaMensal: calculos.mediaMensal,
-            impactoAnual: calculos.impactoAnual,
-            quantumTotal: calculos.quantumTotal
-        }
-    };
-    
-    const json = JSON.stringify(dadosExportacao, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `VDC_PERITIA_${peritiaData.identificacao.pericia}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    adicionarLogConsole('Relatório JSON exportado com valor probatório e rastreabilidade completa.');
-}
+                <section class="module-section">
+                    <h2><i class="fas fa-file-invoice"></i> MÓDULO SAF-T (EXTRAÇÃO)</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">VALOR ILÍQUIDO TOTAL</div>
+                            <div class="metric-value" id="valorIliquidoTotal">7761,67 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" style="width: 85%"></div>
+                            </div>
+                            <div class="metric-files">
+                                <i class="fas fa-file"></i>
+                                <span id="saftFilesCount">4 ficheiros processados</span>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">TOTAL IVA</div>
+                            <div class="metric-value" id="totalIVA">466,30 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">VALOR BRUTO TOTAL</div>
+                            <div class="metric-value" id="valorBrutoTotal">8227,97 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-function gerarParecer() {
-    adicionarLogConsole('A gerar Parecer Pericial...');
-    
-    setTimeout(() => {
-        adicionarLogConsole('PDF exportado com sucesso');
-        alert('Funcionalidade de geração de PDF será implementada. Por agora, utilize o EXPORTAR JSON.');
-    }, 500);
-}
+                <section class="module-section">
+                    <h2><i class="fas fa-file-alt"></i> MÓDULO EXTRATOS (MAPEAMENTO)</h2>
+                    <div class="metrics-grid-large">
+                        <div class="metric-card">
+                            <div class="metric-label">GANHOS NA APP</div>
+                            <div class="metric-value" id="ganhosApp">9507,51 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill orange" style="width: 100%"></div>
+                            </div>
+                            <div class="metric-files">
+                                <i class="fas fa-file"></i>
+                                <span id="appFilesCount">0 ficheiros processados</span>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">CAMPANHAS</div>
+                            <div class="metric-value" id="campanhas">405,00 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill green" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">GORJETAS</div>
+                            <div class="metric-value" id="gorjetas">46,00 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill cyan" style="width: 15%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">PORTAGENS</div>
+                            <div class="metric-value" id="portagens">0,00 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill red" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">TAXAS CANCELAMENTO</div>
+                            <div class="metric-value" id="taxasCancelamento">54,60 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill yellow" style="width: 20%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">COMISSÕES (EXTRATO)</div>
+                            <div class="metric-value" id="comissoesExtrato">2388,89 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill purple" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-function reiniciar() {
-    if (confirm('Deseja reiniciar a sessão? Todos os dados serão perdidos.')) {
-        location.reload();
-    }
-}
+                <section class="module-section">
+                    <h2><i class="fas fa-chart-pie"></i> MÓDULO DAC7 (DECOMPOSIÇÃO)</h2>
+                    <div class="dac7-grid">
+                        <div class="dac7-card">
+                            <div class="dac7-label">1.º TRI</div>
+                            <div class="dac7-value" id="dac7Q1">0,00 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="dac7-card">
+                            <div class="dac7-label">2.º TRI</div>
+                            <div class="dac7-value" id="dac7Q2">0,00 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="dac7-card">
+                            <div class="dac7-label">3.º TRI</div>
+                            <div class="dac7-value" id="dac7Q3">0,00 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="dac7-card highlight">
+                            <div class="dac7-label">4.º TRI</div>
+                            <div class="dac7-value" id="dac7Q4">7755,16 €</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" style="width: 100%"></div>
+                            </div>
+                            <div class="metric-files">
+                                <i class="fas fa-file"></i>
+                                <span id="dac7FilesCount">1 ficheiro processado</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-function limparConsole() {
-    const consoleOutput = document.getElementById('consoleOutput');
-    if (consoleOutput) {
-        consoleOutput.innerHTML = '';
-        adicionarLogConsole('Console limpo.');
-    }
-}
+                <section class="results-section">
+                    <div class="quantum-alert" id="quantumAlert">
+                        <div class="quantum-header">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>QUANTUM DO BENEFÍCIO ILÍCITO (ART. 103.º RGIT)</span>
+                        </div>
+                        <div class="quantum-value" id="quantumValue">980 349 840,00 €</div>
+                        <div class="quantum-formula" id="quantumFormula">
+                            Fórmula: (discrepância / 7 meses) × 12 meses × 98.000 motoristas × 7 anos<br>
+                            Impacto Global Estimado de Mercado (Acumulado 7 Anos)
+                        </div>
+                        <div class="quantum-breakdown">
+                            <div class="breakdown-item">
+                                Discrepância base: <span id="discrepanciaBase">2149,89 €</span>
+                            </div>
+                            <div class="breakdown-item">
+                                Meses com dados: <span id="mesesDados">7</span>
+                            </div>
+                            <div class="breakdown-item">
+                                Média mensal: <span id="mediaMensal">307,13 €</span>
+                            </div>
+                            <div class="breakdown-item">
+                                Impacto anual no motorista: <span id="impactoAnual">3685,53 €</span>
+                            </div>
+                            <div class="breakdown-item">
+                                QUANTUM TOTAL (7 anos): <span id="quantumTotal">980 349 840,00 €</span>
+                            </div>
+                        </div>
+                    </div>
 
-function inicializarEventListeners() {
-    const btnExport = document.getElementById('btnExport');
-    if (btnExport) {
-        btnExport.addEventListener('click', exportarJSON);
-    }
-    
-    const btnParecer = document.getElementById('btnParecer');
-    if (btnParecer) {
-        btnParecer.addEventListener('click', gerarParecer);
-    }
-    
-    const btnReinit = document.getElementById('btnReinit');
-    if (btnReinit) {
-        btnReinit.addEventListener('click', reiniciar);
-    }
-    
-    const btnClearConsole = document.getElementById('btnClearConsole');
-    if (btnClearConsole) {
-        btnClearConsole.addEventListener('click', limparConsole);
-    }
-}
+                    <div class="risk-verdict" id="riskVerdict">
+                        <div class="verdict-header">VEREDICTO DE RISCO (RGIT)</div>
+                        <div class="verdict-status">RISCO ELEVADO</div>
+                        <div class="verdict-percentage" id="riskPercentage">22,61%</div>
+                        <div class="verdict-message">Indícios de desconformidade fiscal significativa.</div>
+                    </div>
 
-function atualizarDataHora() {
-    const agora = new Date();
-    const data = agora.toLocaleDateString('pt-PT', { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric' 
-    });
-    const hora = agora.toLocaleTimeString('pt-PT', { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-    });
-    
-    const sessionDate = document.getElementById('sessionDate');
-    if (sessionDate) {
-        sessionDate.textContent = `${data} | ${hora}`;
-    }
-}
+                    <div class="anomaly-alert" id="anomalyAlert">
+                        <div class="anomaly-header">
+                            <i class="fas fa-radiation"></i>
+                            <span>ANOMALIA ALGORÍTMICA CRÍTICA</span>
+                        </div>
+                        <div class="anomaly-message">
+                            Indício de fraude fiscal não justificada: Discrepância entre comissões do extrato e da fatura:
+                        </div>
+                        <div class="anomaly-value" id="anomalyValue">2149,89 €</div>
+                        <div class="anomaly-detail">Valor acumulado de múltiplos ficheíros</div>
+                    </div>
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('VDC FORENSE v12.7 - Sistema de Perícia Digital Forense');
-    console.log('Inicializando sistema...');
-    
-    atualizarInterface();
-    
-    criarGrafico();
-    
-    inicializarEventListeners();
-    
-    atualizarDataHora();
-    setInterval(atualizarDataHora, 1000);
-    
-    adicionarLogConsole('Sistema inicializado com sucesso');
-    adicionarLogConsole(`Total de ficheiros processados: ${peritiaData.contadores.total} (${peritiaData.contadores.saft} SAF-T, ${peritiaData.contadores.ext} extratos, ${peritiaData.contadores.fat} faturas, ${peritiaData.contadores.dac7} DAC7)`);
-    adicionarLogConsole('Cálculos de discrepância fiscal concluídos');
-    adicionarLogConsole(`Veredicto de Risco: ${peritiaData.risco.veredicto} (${formatarPercentagem(peritiaData.risco.percentagem)})`);
-    
-    console.log('Sistema pronto para utilização');
-});
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <div class="summary-icon"><i class="fas fa-calculator"></i></div>
+                            <div class="summary-content">
+                                <div class="summary-label">VALOR LÍQUIDO RECONSTRUÍDO</div>
+                                <div class="summary-value" id="valorLiquido">7118,62 €</div>
+                                <div class="summary-note">Resultado Bruto - Comissões</div>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-icon"><i class="fas fa-percentage"></i></div>
+                            <div class="summary-content">
+                                <div class="summary-label">COMISSÕES DETETADAS</div>
+                                <div class="summary-value" id="comissoesDetectadas">2388,89 €</div>
+                                <div class="summary-note">Taxa de serviço plataforma</div>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-icon"><i class="fas fa-crosshairs"></i></div>
+                            <div class="summary-content">
+                                <div class="summary-label">FOSSO FISCAL</div>
+                                <div class="summary-value" id="fossoFiscal">2149,89 €</div>
+                                <div class="summary-note">Discrepância calculada (Big Data)</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-window.peritiaData = peritiaData;
-window.calcularValoresCorrigidos = calcularValoresCorrigidos;
-window.exportarJSON = exportarJSON;
+                <section class="chart-section">
+                    <h2><i class="fas fa-chart-bar"></i> REPRESENTAÇÃO GRÁFICA DA ANÁLISE</h2>
+                    <div class="summary-values">
+                        <div class="summary-item">
+                            <span class="summary-label-inline">BRUTO REAL</span>
+                            <span class="summary-value-inline" id="brutoReal">9507,51 €</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label-inline">COMISSÕES</span>
+                            <span class="summary-value-inline" id="comissoesSummary">2388,89 €</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label-inline">LÍQUIDO</span>
+                            <span class="summary-value-inline" id="liquidoSummary">7118,62 €</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label-inline">FATURADO</span>
+                            <span class="summary-value-inline" id="faturadoSummary">239,00 €</span>
+                        </div>
+                    </div>
+                    <canvas id="analysisChart"></canvas>
+                </section>
+
+                <section class="console-section">
+                    <h3><i class="fas fa-terminal"></i> LOG DE CUSTÓDIA • CADEIA DE CUSTÓDIA • BIG DATA</h3>
+                    <div class="console-output" id="consoleOutput">
+                        <div class="console-line">[13:08:25] <span class="console-success">✓</span> CRUZAMENTOS DETALHADOS:</div>
+                        <div class="console-line">[13:08:25] <span class="console-success">✓</span> VALORES UTILIZADOS NA PERÍCIA:</div>
+                        <div class="console-line">[13:08:25] <span class="console-success">✓</span> Perícia BIG DATA concluída em 1121.28ms. VEREDICTO: RISCO ELEVADO</div>
+                        <div class="console-line">[13:08:25] <span class="console-success">✓</span> TRANSPARÊNCIA: 9 ficheiro(s) processados (4 SAF-T, 0 extratos, 0 faturas, 1 DAC7)</div>
+                        <div class="console-line">[13:10:10] <span class="console-success">✓</span> Relatório JSON exportado com valor probatório e rastreabilidade completa.</div>
+                        <div class="console-line">[13:10:11] <span class="console-success">✓</span> A gerar Parecer Pericial...</div>
+                        <div class="console-line">[13:10:11] <span class="console-success">✓</span> PDF exportado com sucesso</div>
+                    </div>
+                </section>
+
+                <div class="system-hash">
+                    <div class="hash-label">INTEGRIDADE DO SISTEMA (MASTER HASH SHA-256 v12.7)</div>
+                    <div class="hash-value" id="systemHash">df74fa5cc3b7da418f6443fc36da33cef9ced3cd34764ea1b10ed92b58a43338</div>
+                    <div class="hash-footer">
+                        VDC System International © 2024/2025 | Módulo de Peritagem Forense v12.7 | BIG DATA ACCUMULATOR | EN → PT
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
