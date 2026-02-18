@@ -1,365 +1,322 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VDC FORENSE - Sistema de Perícia Digital</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="VDC Sistema de Peritagem Forense - Módulo de Análise Financeira e Fiscal v12.7.2 RETA FINAL">
+    <meta name="author" content="VDC Systems International">
+    <title>VDC FORENSE · v12.7.2 RETA FINAL</title>
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="container">
-        <header class="header">
-            <div class="header-left">
-                <i class="fas fa-balance-scale"></i>
-                <div class="header-title">
-                    <h1>VDC FORENSE <span class="version">v12.7</span></h1>
-                    <p class="subtitle">ISO/IEC 27037 | NIST SP 800-86 | Interpol Digital Forensics | BIG DATA</p>
-                </div>
-            </div>
-            <div class="header-right">
-                <button class="btn btn-secondary"><i class="fas fa-folder"></i> CASO SIMULADO</button>
-                <button class="btn btn-primary"><i class="fas fa-language"></i> EN</button>
-                <div class="session-info">
-                    <span class="session-label">SESSÃO:</span>
-                    <span class="session-id" id="sessionId">VDC-MLS1QLX3-FVWHG</span>
-                    <div class="session-date" id="sessionDate">18/02/2026 | 13:10:16</div>
-                </div>
-            </div>
-        </header>
+<body class="forensic-theme">
 
-        <div class="main-content">
-            <aside class="sidebar">
-                <div class="identification-panel">
-                    <h3><i class="fas fa-user-shield"></i> IDENTIFICAÇÃO DO SUJEITO PASSIVO</h3>
-                    <div class="form-group">
-                        <label>NOME / DENOMINAÇÃO SOCIAL</label>
-                        <input type="text" id="entityName" value="Demo Corp, Lda" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label># NIF</label>
-                        <input type="text" id="entityNIF" value="503244732" readonly>
-                    </div>
-                    <button class="btn btn-validate"><i class="fas fa-check"></i> VALIDAR IDENTIDADE</button>
-                    <div class="validation-status">
-                        <i class="fas fa-check-circle"></i>
-                        <span id="validationInfo">Demo Corp, Lda | NIF: 503244732</span>
-                    </div>
-                </div>
-
-                <div class="audit-params">
-                    <h3><i class="fas fa-cogs"></i> PARÂMETROS DE AUDITORIA FORENSE</h3>
-                    
-                    <div class="form-group">
-                        <label><i class="fas fa-calendar"></i> ANO FISCAL EM EXAME</label>
-                        <select id="fiscalYear">
-                            <option value="2024" selected>2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-clock"></i> PERÍODO TEMPORAL</label>
-                        <select id="temporalPeriod">
-                            <option value="2" selected>2.º Semestre</option>
-                            <option value="1">1.º Semestre</option>
-                            <option value="annual">Anual</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-laptop-code"></i> PLATAFORMA DIGITAL</label>
-                        <select id="digitalPlatform">
-                            <option value="bolt" selected>Bolt Operations OÜ</option>
-                            <option value="uber">Uber Technologies Inc.</option>
-                            <option value="glovo">Glovo App 23 SL</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="evidence-manager">
-                    <h3><i class="fas fa-folder-open"></i> GESTÃO DE EVIDÊNCIAS</h3>
-                    <div class="evidence-stats">
-                        <div class="stat-item">
-                            <span class="stat-number" id="ctrlCount">4</span>
-                            <span class="stat-label">CTRL</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="saftCount">4</span>
-                            <span class="stat-label">SAF-T</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="fatCount">0</span>
-                            <span class="stat-label">FAT</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="extCount">0</span>
-                            <span class="stat-label">EXT</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="dac7Count">1</span>
-                            <span class="stat-label">DAC7</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-execute"><i class="fas fa-play"></i> EXECUTAR PERÍCIA</button>
-                </div>
-            </aside>
-
-            <div class="content-area">
-                <div class="action-bar">
-                    <button class="btn btn-secondary" id="btnParecer"><i class="fas fa-file-pdf"></i> PARECER PERICIAL</button>
-                    <button class="btn btn-secondary" id="btnExport"><i class="fas fa-download"></i> EXPORTAR JSON</button>
-                    <button class="btn btn-secondary" id="btnReinit"><i class="fas fa-sync"></i> REINICIAR</button>
-                    <button class="btn btn-secondary" id="btnClearConsole"><i class="fas fa-trash"></i> LIMPAR CONSOLE</button>
-                </div>
-
-                <section class="module-section">
-                    <h2><i class="fas fa-file-invoice"></i> MÓDULO SAF-T (EXTRAÇÃO)</h2>
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-label">VALOR ILÍQUIDO TOTAL</div>
-                            <div class="metric-value" id="valorIliquidoTotal">7761,67 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill" style="width: 85%"></div>
-                            </div>
-                            <div class="metric-files">
-                                <i class="fas fa-file"></i>
-                                <span id="saftFilesCount">4 ficheiros processados</span>
-                            </div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">TOTAL IVA</div>
-                            <div class="metric-value" id="totalIVA">466,30 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">VALOR BRUTO TOTAL</div>
-                            <div class="metric-value" id="valorBrutoTotal">8227,97 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill" style="width: 100%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="module-section">
-                    <h2><i class="fas fa-file-alt"></i> MÓDULO EXTRATOS (MAPEAMENTO)</h2>
-                    <div class="metrics-grid-large">
-                        <div class="metric-card">
-                            <div class="metric-label">GANHOS NA APP</div>
-                            <div class="metric-value" id="ganhosApp">9507,51 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill orange" style="width: 100%"></div>
-                            </div>
-                            <div class="metric-files">
-                                <i class="fas fa-file"></i>
-                                <span id="appFilesCount">0 ficheiros processados</span>
-                            </div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">CAMPANHAS</div>
-                            <div class="metric-value" id="campanhas">405,00 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill green" style="width: 40%"></div>
-                            </div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">GORJETAS</div>
-                            <div class="metric-value" id="gorjetas">46,00 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill cyan" style="width: 15%"></div>
-                            </div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">PORTAGENS</div>
-                            <div class="metric-value" id="portagens">0,00 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill red" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">TAXAS CANCELAMENTO</div>
-                            <div class="metric-value" id="taxasCancelamento">54,60 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill yellow" style="width: 20%"></div>
-                            </div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">COMISSÕES (EXTRATO)</div>
-                            <div class="metric-value" id="comissoesExtrato">2388,89 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill purple" style="width: 70%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="module-section">
-                    <h2><i class="fas fa-chart-pie"></i> MÓDULO DAC7 (DECOMPOSIÇÃO)</h2>
-                    <div class="dac7-grid">
-                        <div class="dac7-card">
-                            <div class="dac7-label">1.º TRI</div>
-                            <div class="dac7-value" id="dac7Q1">0,00 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="dac7-card">
-                            <div class="dac7-label">2.º TRI</div>
-                            <div class="dac7-value" id="dac7Q2">0,00 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="dac7-card">
-                            <div class="dac7-label">3.º TRI</div>
-                            <div class="dac7-value" id="dac7Q3">0,00 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="dac7-card highlight">
-                            <div class="dac7-label">4.º TRI</div>
-                            <div class="dac7-value" id="dac7Q4">7755,16 €</div>
-                            <div class="metric-bar">
-                                <div class="metric-bar-fill" style="width: 100%"></div>
-                            </div>
-                            <div class="metric-files">
-                                <i class="fas fa-file"></i>
-                                <span id="dac7FilesCount">1 ficheiro processado</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="results-section">
-                    <div class="quantum-alert" id="quantumAlert">
-                        <div class="quantum-header">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <span>QUANTUM DO BENEFÍCIO ILÍCITO (ART. 103.º RGIT)</span>
-                        </div>
-                        <div class="quantum-value" id="quantumValue">980 349 840,00 €</div>
-                        <div class="quantum-formula" id="quantumFormula">
-                            Fórmula: (discrepância / 7 meses) × 12 meses × 98.000 motoristas × 7 anos<br>
-                            Impacto Global Estimado de Mercado (Acumulado 7 Anos)
-                        </div>
-                        <div class="quantum-breakdown">
-                            <div class="breakdown-item">
-                                Discrepância base: <span id="discrepanciaBase">2149,89 €</span>
-                            </div>
-                            <div class="breakdown-item">
-                                Meses com dados: <span id="mesesDados">7</span>
-                            </div>
-                            <div class="breakdown-item">
-                                Média mensal: <span id="mediaMensal">307,13 €</span>
-                            </div>
-                            <div class="breakdown-item">
-                                Impacto anual no motorista: <span id="impactoAnual">3685,53 €</span>
-                            </div>
-                            <div class="breakdown-item">
-                                QUANTUM TOTAL (7 anos): <span id="quantumTotal">980 349 840,00 €</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="risk-verdict" id="riskVerdict">
-                        <div class="verdict-header">VEREDICTO DE RISCO (RGIT)</div>
-                        <div class="verdict-status">RISCO ELEVADO</div>
-                        <div class="verdict-percentage" id="riskPercentage">22,61%</div>
-                        <div class="verdict-message">Indícios de desconformidade fiscal significativa.</div>
-                    </div>
-
-                    <div class="anomaly-alert" id="anomalyAlert">
-                        <div class="anomaly-header">
-                            <i class="fas fa-radiation"></i>
-                            <span>ANOMALIA ALGORÍTMICA CRÍTICA</span>
-                        </div>
-                        <div class="anomaly-message">
-                            Indício de fraude fiscal não justificada: Discrepância entre comissões do extrato e da fatura:
-                        </div>
-                        <div class="anomaly-value" id="anomalyValue">2149,89 €</div>
-                        <div class="anomaly-detail">Valor acumulado de múltiplos ficheíros</div>
-                    </div>
-
-                    <div class="summary-cards">
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fas fa-calculator"></i></div>
-                            <div class="summary-content">
-                                <div class="summary-label">VALOR LÍQUIDO RECONSTRUÍDO</div>
-                                <div class="summary-value" id="valorLiquido">7118,62 €</div>
-                                <div class="summary-note">Resultado Bruto - Comissões</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fas fa-percentage"></i></div>
-                            <div class="summary-content">
-                                <div class="summary-label">COMISSÕES DETETADAS</div>
-                                <div class="summary-value" id="comissoesDetectadas">2388,89 €</div>
-                                <div class="summary-note">Taxa de serviço plataforma</div>
-                            </div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-icon"><i class="fas fa-crosshairs"></i></div>
-                            <div class="summary-content">
-                                <div class="summary-label">FOSSO FISCAL</div>
-                                <div class="summary-value" id="fossoFiscal">2149,89 €</div>
-                                <div class="summary-note">Discrepância calculada (Big Data)</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="chart-section">
-                    <h2><i class="fas fa-chart-bar"></i> REPRESENTAÇÃO GRÁFICA DA ANÁLISE</h2>
-                    <div class="summary-values">
-                        <div class="summary-item">
-                            <span class="summary-label-inline">BRUTO REAL</span>
-                            <span class="summary-value-inline" id="brutoReal">9507,51 €</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label-inline">COMISSÕES</span>
-                            <span class="summary-value-inline" id="comissoesSummary">2388,89 €</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label-inline">LÍQUIDO</span>
-                            <span class="summary-value-inline" id="liquidoSummary">7118,62 €</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label-inline">FATURADO</span>
-                            <span class="summary-value-inline" id="faturadoSummary">239,00 €</span>
-                        </div>
-                    </div>
-                    <canvas id="analysisChart"></canvas>
-                </section>
-
-                <section class="console-section">
-                    <h3><i class="fas fa-terminal"></i> LOG DE CUSTÓDIA • CADEIA DE CUSTÓDIA • BIG DATA</h3>
-                    <div class="console-output" id="consoleOutput">
-                        <div class="console-line">[13:08:25] <span class="console-success">✓</span> CRUZAMENTOS DETALHADOS:</div>
-                        <div class="console-line">[13:08:25] <span class="console-success">✓</span> VALORES UTILIZADOS NA PERÍCIA:</div>
-                        <div class="console-line">[13:08:25] <span class="console-success">✓</span> Perícia BIG DATA concluída em 1121.28ms. VEREDICTO: RISCO ELEVADO</div>
-                        <div class="console-line">[13:08:25] <span class="console-success">✓</span> TRANSPARÊNCIA: 9 ficheiro(s) processados (4 SAF-T, 0 extratos, 0 faturas, 1 DAC7)</div>
-                        <div class="console-line">[13:10:10] <span class="console-success">✓</span> Relatório JSON exportado com valor probatório e rastreabilidade completa.</div>
-                        <div class="console-line">[13:10:11] <span class="console-success">✓</span> A gerar Parecer Pericial...</div>
-                        <div class="console-line">[13:10:11] <span class="console-success">✓</span> PDF exportado com sucesso</div>
-                    </div>
-                </section>
-
-                <div class="system-hash">
-                    <div class="hash-label">INTEGRIDADE DO SISTEMA (MASTER HASH SHA-256 v12.7)</div>
-                    <div class="hash-value" id="systemHash">df74fa5cc3b7da418f6443fc36da33cef9ced3cd34764ea1b10ed92b58a43338</div>
-                    <div class="hash-footer">
-                        VDC System International © 2024/2025 | Módulo de Peritagem Forense v12.7 | BIG DATA ACCUMULATOR | EN → PT
-                    </div>
-                </div>
+    <div id="loaderOverlay" class="loader-overlay hidden">
+        <div class="loader-content">
+            <div class="scanner-line"></div>
+            <div class="loader-spinner"></div>
+            <p id="loaderText">A PROCESSAR EVIDÊNCIAS...</p>
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <div class="panoramic-bg"></div>
+    <div class="laser-h"></div>
+    <div class="laser-v"></div>
+
+    <div class="app-container">
+        
+        <aside class="sidebar-forensic">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <span class="logo-icon">🔬</span>
+                    <div class="logo-text">
+                        <h1>VDC <span class="accent">FORENSE</span></h1>
+                        <span class="version-tag">v12.7.2 RETA FINAL</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-content">
+                <section class="config-section">
+                    <h3><i class="fas fa-id-card"></i> IDENTIFICAÇÃO DO SUJEITO</h3>
+                    <div class="input-group">
+                        <label>Nome da Entidade / Motorista</label>
+                        <input type="text" id="clientName" placeholder="Ex: João Silva ou Empresa Lda">
+                    </div>
+                    <div class="input-group">
+                        <label>NIF / Identificação Fiscal</label>
+                        <input type="text" id="clientNif" placeholder="000 000 000">
+                    </div>
+                    <div class="input-group">
+                        <label>Plataforma de Origem</label>
+                        <select id="platformSelect">
+                            <option value="bolt">Bolt Operations OÜ</option>
+                            <option value="uber">Uber B.V.</option>
+                            <option value="free">Outra / Manual</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="config-section">
+                    <h3><i class="fas fa-sliders-h"></i> PARÂMETROS TEMPORAIS</h3>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Ano Fiscal</label>
+                            <input type="number" id="fiscalYear" value="2024">
+                        </div>
+                        <div class="input-group">
+                            <label>Período</label>
+                            <select id="fiscalPeriod">
+                                <option value="1s">1º Semestre</option>
+                                <option value="2s" selected>2º Semestre</option>
+                                <option value="anual">Anual</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="sidebar-actions">
+                    <button id="analyzeBtn" class="btn-primary pulse" disabled>
+                        <i class="fas fa-microscope"></i> EXECUTAR ANÁLISE CRUZADA
+                    </button>
+                    <button id="resetBtn" class="btn-outline">
+                        <i class="fas fa-undo"></i> REINICIAR SISTEMA
+                    </button>
+                </div>
+
+                <div class="session-info">
+                    <div class="info-row">
+                        <span>ID SESSÃO:</span>
+                        <span id="sessionID" class="mono-value">---</span>
+                    </div>
+                    <div class="info-row">
+                        <span>HASH MESTRE:</span>
+                        <span id="masterHash" class="mono-value">---</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-dashboard">
+            
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h2>PAINEL DE CONTROLO DE EVIDÊNCIAS</h2>
+                    <p class="subtitle">Cruzamento de dados SAF-T, Aplicações e Documentação Bancária</p>
+                </div>
+                <div class="header-right">
+                    <div class="status-badge" id="systemStatus">
+                        <span class="status-dot green"></span>
+                        SISTEMA PRONTO
+                    </div>
+                </div>
+            </header>
+
+            <section class="upload-grid">
+                <div class="drop-zone" id="drop-saft" data-type="saft">
+                    <input type="file" id="file-saft" multiple accept=".xml" class="file-input">
+                    <div class="drop-zone-content">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <h4>FICHEIROS SAF-T</h4>
+                        <p>Arraste ficheiros .xml aqui</p>
+                        <div class="file-counter" id="count-saft">0 ficheiros</div>
+                    </div>
+                </div>
+
+                <div class="drop-zone" id="drop-statements" data-type="statements">
+                    <input type="file" id="file-statements" multiple accept=".pdf,.csv" class="file-input">
+                    <div class="drop-zone-content">
+                        <i class="fas fa-university"></i>
+                        <h4>EXTRATOS BANCÁRIOS</h4>
+                        <p>PDF ou CSV bancário</p>
+                        <div class="file-counter" id="count-statements">0 ficheiros</div>
+                    </div>
+                </div>
+
+                <div class="drop-zone" id="drop-invoices" data-type="invoices">
+                    <input type="file" id="file-invoices" multiple accept=".pdf" class="file-input">
+                    <div class="drop-zone-content">
+                        <i class="fas fa-receipt"></i>
+                        <h4>FATURAS / RELATÓRIOS APP</h4>
+                        <p>PDFs faturados pela App</p>
+                        <div class="file-counter" id="count-invoices">0 ficheiros</div>
+                    </div>
+                </div>
+
+                <div class="drop-zone" id="drop-dac7" data-type="dac7">
+                    <input type="file" id="file-dac7" multiple accept=".pdf,.png,.jpg,.jpeg" class="file-input">
+                    <div class="drop-zone-content">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4>DAC7 / OUTROS</h4>
+                        <p>Comprovativos e Printscreens</p>
+                        <div class="file-counter" id="count-dac7">0 ficheiros</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="kpi-grid">
+                <div class="kpi-card" data-tooltip="Total bruto registado no SAF-T">
+                    <div class="kpi-icon saft-color"><i class="fas fa-file-invoice"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">SAF-T BRUTO</span>
+                        <h3 id="valSaft">0,00 €</h3>
+                        <span class="kpi-subtext" id="subSaft">0 ficheiros processados</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card" data-tooltip="Ganhos totais extraídos dos relatórios da aplicação">
+                    <div class="kpi-icon app-color"><i class="fas fa-mobile-alt"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">GANHOS APP</span>
+                        <h3 id="valApp">0,00 €</h3>
+                        <span class="kpi-subtext" id="subApp">0 ficheiros processados</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card" data-tooltip="Valor total de impostos/IVA identificados">
+                    <div class="kpi-icon tax-color"><i class="fas fa-percent"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">COMISSÕES / IVA</span>
+                        <h3 id="valTax">0,00 €</h3>
+                        <span class="kpi-subtext" id="subTax">Calculado via algoritmos</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card highlight" data-tooltip="Diferença absoluta entre SAF-T e Ganhos Reais">
+                    <div class="kpi-icon risk-color"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">DISCREPÂNCIA</span>
+                        <h3 id="valDiff">0,00 €</h3>
+                        <span class="kpi-subtext" id="subDiff">Margem de erro: 0%</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="analysis-area">
+                <div class="chart-container card-forensic">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-line"></i> TENDÊNCIA E CRUZAMENTO</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><i class="dot saft"></i> SAF-T</span>
+                            <span class="legend-item"><i class="dot app"></i> APP</span>
+                        </div>
+                    </div>
+                    <canvas id="forensicChart"></canvas>
+                </div>
+
+                <div class="log-container card-forensic">
+                    <div class="card-header">
+                        <h3><i class="fas fa-terminal"></i> LOG DE AUDITORIA (VDC-CORE)</h3>
+                        <button id="clearLog" class="btn-text">LIMPAR</button>
+                    </div>
+                    <div id="forensicLog" class="log-output">
+                        <div class="log-entry system">SISTEMA INICIALIZADO: AGUARDANDO EVIDÊNCIAS...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="resultSection" class="results-grid hidden">
+                <div class="verdict-card card-forensic">
+                    <h3>VEREDICTO DE RISCO</h3>
+                    <div id="verdictBadge" class="verdict-badge">PENDENTE</div>
+                    <p id="verdictDescription">Insira dados para gerar o parecer técnico automático.</p>
+                </div>
+
+                <div class="quantum-card card-forensic">
+                    <h3>ESTIMATIVA DE QUANTUM (Art. 103º RGIT)</h3>
+                    <div class="quantum-value" id="valQuantum">0,00 €</div>
+                    <p class="quantum-note">* Estimativa baseada na extrapolação de 7 anos conforme norma legal.</p>
+                    <button id="downloadReport" class="btn-secondary">
+                        <i class="fas fa-file-pdf"></i> GERAR PARECER TÉCNICO (PDF)
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="fileModal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-open"></i> EVIDÊNCIAS NO CONTENTOR</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="file-list-container">
+                    <table class="forensic-table">
+                        <thead>
+                            <tr>
+                                <th>NOME DO FICHEIRO</th>
+                                <th>TIPO</th>
+                                <th>TAMANHO</th>
+                                <th>STATUS</th>
+                                <th>AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fileListBody">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div class="summary-box">
+                    <h4>RESUMO DA CARGA</h4>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">SAF-T</span>
+                            <span id="summarySaft" class="summary-value">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">APP/FATURAS</span>
+                            <span id="summaryInvoices" class="summary-value">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">EXTRATOS</span>
+                            <span id="summaryStatements" class="summary-value">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">DAC7/OUTROS</span>
+                            <span id="summaryDac7" class="summary-value">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">TOTAL</span>
+                            <span id="summaryTotal" class="summary-value total">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="closeAndSaveBtn" class="btn-primary">
+                    <i class="fas fa-check-circle"></i> SELAR EVIDÊNCIAS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <script>
+        // Inicialização global para PDF.js
+        window.pdfjsLib = window['pdfjs-dist/build/pdf'];
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
     <script src="script.js"></script>
+
 </body>
 </html>
