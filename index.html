@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VDC Sistema de Peritagem Forense - Módulo de Análise Financeira e Fiscal v12.7 RETA FINAL">
-    <meta name="author" content="VDC Systems International">
+    <meta name="description" content="VDC Sistema de Peritagem Forense - v12.7 RETA FINAL">
     <title>VDC FORENSE · v12.7 RETA FINAL</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="forensic-theme">
@@ -27,18 +24,13 @@
         <div class="laser-h"></div>
         <div class="laser-v"></div>
         <div class="splash-content">
-            <div class="splash-logo">
-                <i class="fas fa-fingerprint"></i>
-            </div>
+            <div class="splash-logo"><i class="fas fa-fingerprint"></i></div>
             <h1>SISTEMA DE PERITAGEM FORENSE</h1>
             <h2>VDC SYSTEMS INTERNATIONAL</h2>
-            <p class="splash-subtitle">MÓDULO DE INVESTIGAÇÃO DIGITAL · ISO/IEC 27037 · BIG DATA ACCUMULATOR</p>
-            
             <div class="splash-warning-box">
                 <p><i class="fas fa-gavel"></i> AVISO JUDICIAL</p>
-                <small>Este sistema destina-se exclusivamente a uso pericial autorizado. O acesso não autorizado, manipulação de logs ou extração indevida de dados constitui crime previsto no art. 103.º RGIT e normas de Cibersegurança.</small>
+                <small>Uso pericial autorizado sob o Art. 103.º RGIT.</small>
             </div>
-
             <button id="startSessionBtn" class="splash-btn">
                 <i class="fas fa-power-off"></i> <span>INICIAR PERÍCIA v12.7</span>
             </button>
@@ -47,12 +39,8 @@
 
     <div id="loaderOverlay" class="loader-overlay hidden">
         <div class="loader-content">
-            <div class="scanner-line"></div>
             <div class="loader-spinner"></div>
             <p id="loaderText">A ANALISAR EVIDÊNCIAS...</p>
-            <div class="progress-container">
-                <div id="progressBar" class="progress-bar"></div>
-            </div>
         </div>
     </div>
 
@@ -71,226 +59,114 @@
 
             <div class="sidebar-content">
                 <section class="config-section">
-                    <h3><i class="fas fa-id-card"></i> IDENTIFICAÇÃO DO SUJEITO</h3>
+                    <h3><i class="fas fa-id-card"></i> IDENTIFICAÇÃO</h3>
                     <div class="input-group">
                         <label>Entidade / Motorista</label>
-                        <input type="text" id="clientName" placeholder="Nome completo do auditado">
+                        <input type="text" id="clientName" placeholder="Nome completo">
                     </div>
                     <div class="input-group">
-                        <label>NIF / Identificação Fiscal</label>
-                        <input type="text" id="clientNif" maxlength="9" placeholder="000 000 000">
+                        <label>NIF (9 dígitos)</label>
+                        <input type="text" id="clientNif" maxlength="9" placeholder="000000000">
                         <span id="nifStatus" class="input-feedback"></span>
                     </div>
                     <div class="input-group">
-                        <label>Plataforma de Origem</label>
+                        <label>Plataforma</label>
                         <select id="platformSelect">
                             <option value="bolt">Bolt Operations OÜ</option>
                             <option value="uber">Uber B.V.</option>
-                            <option value="free">Outra / Manual</option>
                         </select>
                     </div>
                 </section>
 
-                <section class="config-section">
-                    <h3><i class="fas fa-sliders-h"></i> PARÂMETROS DA PERÍCIA</h3>
-                    <div class="grid-2">
-                        <div class="input-group">
-                            <label>Ano Fiscal</label>
-                            <input type="number" id="fiscalYear" value="2026">
-                        </div>
-                        <div class="input-group">
-                            <label>Período</label>
-                            <select id="fiscalPeriod">
-                                <option value="1s">1º Semestre</option>
-                                <option value="2s" selected>2º Semestre</option>
-                                <option value="anual">Anual</option>
-                            </select>
-                        </div>
-                    </div>
-                </section>
-
                 <div class="sidebar-actions">
-                    <button id="analyzeBtn" class="btn-primary pulse" disabled>
-                        <i class="fas fa-microscope"></i> EXECUTAR ANÁLISE CRUZADA
+                    <button id="analyzeBtn" class="btn-primary" disabled>
+                        <i class="fas fa-microscope"></i> EXECUTAR ANÁLISE
                     </button>
                     <button id="resetBtn" class="btn-outline">
-                        <i class="fas fa-trash-alt"></i> LIMPAR SESSÃO
+                        <i class="fas fa-trash-alt"></i> LIMPAR TUDO
                     </button>
                 </div>
 
                 <div class="session-info">
-                    <div class="info-row">
-                        <span>ID SESSÃO:</span>
-                        <span id="sessionID" class="mono-value">VDC-OFFLINE</span>
-                    </div>
-                    <div class="info-row">
-                        <span>HASH MESTRE:</span>
-                        <span id="masterHash" class="mono-value">---</span>
-                    </div>
+                    <p>ID: <span id="sessionID" class="mono-value">---</span></p>
+                    <p>HASH: <span id="masterHash" class="mono-value">---</span></p>
                 </div>
             </div>
         </aside>
 
         <main class="main-dashboard">
             <header class="dashboard-header">
-                <div class="header-left">
-                    <h2>PAINEL DE CONTROLO DE EVIDÊNCIAS</h2>
-                    <p class="subtitle">Triangulação de Dados: SAF-T vs Aplicações vs Bancário</p>
-                </div>
-                <div class="header-right">
-                    <div class="status-badge" id="systemStatus">
-                        <span class="status-dot green"></span>
-                        SISTEMA PRONTO
-                    </div>
-                </div>
+                <h2>PAINEL DE EVIDÊNCIAS</h2>
+                <div id="systemStatus" class="status-badge"><span class="status-dot green"></span> SISTEMA ONLINE</div>
             </header>
 
             <section class="upload-grid">
                 <div class="drop-zone" id="drop-saft" data-type="saft">
                     <input type="file" id="file-saft" multiple accept=".xml" class="file-input">
-                    <div class="drop-zone-content">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <h4>FICHEIROS SAF-T</h4>
-                        <p>XML de faturação</p>
-                        <div class="file-counter" id="count-saft">0 ficheiros</div>
-                    </div>
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h4>SAF-T</h4>
+                    <div class="file-counter" id="count-saft">0 ficheiros</div>
                 </div>
-
                 <div class="drop-zone" id="drop-statements" data-type="statements">
                     <input type="file" id="file-statements" multiple accept=".pdf,.csv" class="file-input">
-                    <div class="drop-zone-content">
-                        <i class="fas fa-university"></i>
-                        <h4>EXTRATOS BANCÁRIOS</h4>
-                        <p>PDF/CSV de conta profissional</p>
-                        <div class="file-counter" id="count-statements">0 ficheiros</div>
-                    </div>
+                    <i class="fas fa-university"></i>
+                    <h4>EXTRATOS</h4>
+                    <div class="file-counter" id="count-statements">0 ficheiros</div>
                 </div>
-
                 <div class="drop-zone" id="drop-invoices" data-type="invoices">
                     <input type="file" id="file-invoices" multiple accept=".pdf" class="file-input">
-                    <div class="drop-zone-content">
-                        <i class="fas fa-receipt"></i>
-                        <h4>RELATÓRIOS APP</h4>
-                        <p>Faturas e Ganhos da Plataforma</p>
-                        <div class="file-counter" id="count-invoices">0 ficheiros</div>
-                    </div>
+                    <i class="fas fa-receipt"></i>
+                    <h4>FATURAS APP</h4>
+                    <div class="file-counter" id="count-invoices">0 ficheiros</div>
                 </div>
-
                 <div class="drop-zone" id="drop-dac7" data-type="dac7">
                     <input type="file" id="file-dac7" multiple accept=".pdf" class="file-input">
-                    <div class="drop-zone-content">
-                        <i class="fas fa-shield-alt"></i>
-                        <h4>DAC7 / OUTROS</h4>
-                        <p>Comprovativos de rendimento</p>
-                        <div class="file-counter" id="count-dac7">0 ficheiros</div>
-                    </div>
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>DAC7</h4>
+                    <div class="file-counter" id="count-dac7">0 ficheiros</div>
                 </div>
             </section>
 
             <section class="kpi-grid">
-                <div class="kpi-card" data-tooltip="Total bruto registado no sistema de faturação SAF-T">
-                    <div class="kpi-icon saft-color"><i class="fas fa-file-invoice"></i></div>
-                    <div class="kpi-data">
-                        <span class="kpi-label">SAF-T BRUTO</span>
-                        <h3 id="valSaft">0,00 €</h3>
-                        <span class="kpi-subtext" id="subSaft">Aguarda ficheiros</span>
-                    </div>
+                <div class="kpi-card saft-color">
+                    <span class="kpi-label">SAF-T BRUTO</span>
+                    <h3 id="valSaft">0,00 €</h3>
+                    <span class="kpi-subtext" id="subSaft">0 ficheiros</span>
                 </div>
-
-                <div class="kpi-card" data-tooltip="Ganhos totais reportados pela aplicação">
-                    <div class="kpi-icon app-color"><i class="fas fa-mobile-alt"></i></div>
-                    <div class="kpi-data">
-                        <span class="kpi-label">GANHOS REAIS APP</span>
-                        <h3 id="valApp">0,00 €</h3>
-                        <span class="kpi-subtext" id="subApp">Aguarda ficheiros</span>
-                    </div>
+                <div class="kpi-card app-color">
+                    <span class="kpi-label">GANHOS REAIS APP</span>
+                    <h3 id="valApp">0,00 €</h3>
+                    <span class="kpi-subtext" id="subApp">0 ficheiros</span>
                 </div>
-
-                <div class="kpi-card" data-tooltip="Diferença entre SAF-T e Ganhos Reais">
-                    <div class="kpi-icon risk-color"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="kpi-data">
-                        <span class="kpi-label">DISCREPÂNCIA</span>
-                        <h3 id="valDiff">0,00 €</h3>
-                        <span class="kpi-subtext" id="subDiff">Desvio: 0%</span>
-                    </div>
+                <div class="kpi-card risk-color">
+                    <span class="kpi-label">DISCREPÂNCIA</span>
+                    <h3 id="valDiff">0,00 €</h3>
+                    <span class="kpi-subtext" id="subDiff">Desvio: 0%</span>
                 </div>
-
-                <div class="kpi-card highlight" data-tooltip="Estimativa de risco fiscal (RGIT)">
-                    <div class="kpi-icon quantum-color"><i class="fas fa-scale-balanced"></i></div>
-                    <div class="kpi-data">
-                        <span class="kpi-label">ESTIMATIVA QUANTUM</span>
-                        <h3 id="valQuantum">0,00 €</h3>
-                        <span class="kpi-subtext">Cálculo 7 anos (Art. 103)</span>
-                    </div>
+                <div class="kpi-card quantum-color">
+                    <span class="kpi-label">QUANTUM (7 ANOS)</span>
+                    <h3 id="valQuantum">0,00 €</h3>
+                    <span class="kpi-subtext">Art. 103 RGIT</span>
                 </div>
             </section>
 
             <section class="analysis-area">
                 <div class="chart-container card-forensic">
-                    <div class="card-header">
-                        <h3><i class="fas fa-chart-line"></i> TENDÊNCIA E CRUZAMENTO</h3>
-                    </div>
-                    <div class="canvas-wrapper">
-                        <canvas id="forensicChart"></canvas>
-                    </div>
+                    <div class="canvas-wrapper"><canvas id="forensicChart"></canvas></div>
                 </div>
-
                 <div class="log-container card-forensic">
-                    <div class="card-header">
-                        <h3><i class="fas fa-terminal"></i> AUDIT LOG (VDC-CORE)</h3>
-                        <button id="clearLog" class="btn-text">LIMPAR</button>
-                    </div>
-                    <div id="forensicLog" class="log-output">
-                        <div class="log-entry system">AGUARDANDO INÍCIO DE SESSÃO...</div>
-                    </div>
+                    <div id="forensicLog" class="log-output"></div>
                 </div>
             </section>
 
             <section id="resultSection" class="results-grid hidden">
                 <div class="verdict-card card-forensic">
-                    <h3>VEREDICTO PERICIAL</h3>
-                    <div id="verdictBadge" class="verdict-badge">PENDENTE</div>
-                    <p id="verdictDescription">Processamento de dados necessário para parecer técnico.</p>
-                </div>
-
-                <div class="actions-footer">
-                    <button id="downloadReport" class="btn-secondary">
-                        <i class="fas fa-file-pdf"></i> GERAR PARECER TÉCNICO
-                    </button>
-                    <button id="openModalBtn" class="btn-outline">
-                        <i class="fas fa-box-open"></i> VER CONTENTOR DE EVIDÊNCIAS
-                    </button>
+                    <div id="verdictBadge" class="verdict-badge">---</div>
+                    <p id="verdictDescription">---</p>
                 </div>
             </section>
         </main>
     </div>
-
-    <div id="fileModal" class="modal">
-        <div class="modal-content glass">
-            <div class="modal-header">
-                <h3><i class="fas fa-folder-open"></i> EVIDÊNCIAS NO CONTENTOR</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <table class="forensic-table">
-                    <thead>
-                        <tr>
-                            <th>FICHEIRO</th>
-                            <th>CATEGORIA</th>
-                            <th>TAMANHO</th>
-                            <th>STATUS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="fileListBody"></tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button id="closeModalBtn" class="btn-primary">FECHAR CONTENTOR</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="toastContainer"></div>
 
     <script src="script.js"></script>
 </body>
