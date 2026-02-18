@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="VDC Sistema de Peritagem Forense - Módulo de Análise Financeira e Fiscal v12.7.2 RETA FINAL">
+    <meta name="description" content="VDC Sistema de Peritagem Forense - Módulo de Análise Financeira e Fiscal v12.7 RETA FINAL">
     <meta name="author" content="VDC Systems International">
-    <title>VDC FORENSE · v12.7.2 RETA FINAL</title>
+    <title>VDC FORENSE · v12.7 RETA FINAL</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
 
@@ -14,7 +14,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -24,22 +23,40 @@
 </head>
 <body class="forensic-theme">
 
+    <div id="splashScreen" class="splash-screen">
+        <div class="laser-h"></div>
+        <div class="laser-v"></div>
+        <div class="splash-content">
+            <div class="splash-logo">
+                <i class="fas fa-fingerprint"></i>
+            </div>
+            <h1>SISTEMA DE PERITAGEM FORENSE</h1>
+            <h2>VDC SYSTEMS INTERNATIONAL</h2>
+            <p class="splash-subtitle">MÓDULO DE INVESTIGAÇÃO DIGITAL · ISO/IEC 27037 · BIG DATA ACCUMULATOR</p>
+            
+            <div class="splash-warning-box">
+                <p><i class="fas fa-gavel"></i> AVISO JUDICIAL</p>
+                <small>Este sistema destina-se exclusivamente a uso pericial autorizado. O acesso não autorizado, manipulação de logs ou extração indevida de dados constitui crime previsto no art. 103.º RGIT e normas de Cibersegurança.</small>
+            </div>
+
+            <button id="startSessionBtn" class="splash-btn">
+                <i class="fas fa-power-off"></i> <span>INICIAR PERÍCIA v12.7</span>
+            </button>
+        </div>
+    </div>
+
     <div id="loaderOverlay" class="loader-overlay hidden">
         <div class="loader-content">
             <div class="scanner-line"></div>
             <div class="loader-spinner"></div>
-            <p id="loaderText">A PROCESSAR EVIDÊNCIAS...</p>
+            <p id="loaderText">A ANALISAR EVIDÊNCIAS...</p>
             <div class="progress-container">
                 <div id="progressBar" class="progress-bar"></div>
             </div>
         </div>
     </div>
 
-    <div class="panoramic-bg"></div>
-    <div class="laser-h"></div>
-    <div class="laser-v"></div>
-
-    <div class="app-container">
+    <div id="app" class="app-container hidden">
         
         <aside class="sidebar-forensic">
             <div class="sidebar-header">
@@ -47,7 +64,7 @@
                     <span class="logo-icon">🔬</span>
                     <div class="logo-text">
                         <h1>VDC <span class="accent">FORENSE</span></h1>
-                        <span class="version-tag">v12.7.2 RETA FINAL</span>
+                        <span class="version-tag">v12.7.1 PROFESSIONAL</span>
                     </div>
                 </div>
             </div>
@@ -56,12 +73,13 @@
                 <section class="config-section">
                     <h3><i class="fas fa-id-card"></i> IDENTIFICAÇÃO DO SUJEITO</h3>
                     <div class="input-group">
-                        <label>Nome da Entidade / Motorista</label>
-                        <input type="text" id="clientName" placeholder="Ex: João Silva ou Empresa Lda">
+                        <label>Entidade / Motorista</label>
+                        <input type="text" id="clientName" placeholder="Nome completo do auditado">
                     </div>
                     <div class="input-group">
                         <label>NIF / Identificação Fiscal</label>
-                        <input type="text" id="clientNif" placeholder="000 000 000">
+                        <input type="text" id="clientNif" maxlength="9" placeholder="000 000 000">
+                        <span id="nifStatus" class="input-feedback"></span>
                     </div>
                     <div class="input-group">
                         <label>Plataforma de Origem</label>
@@ -74,11 +92,11 @@
                 </section>
 
                 <section class="config-section">
-                    <h3><i class="fas fa-sliders-h"></i> PARÂMETROS TEMPORAIS</h3>
+                    <h3><i class="fas fa-sliders-h"></i> PARÂMETROS DA PERÍCIA</h3>
                     <div class="grid-2">
                         <div class="input-group">
                             <label>Ano Fiscal</label>
-                            <input type="number" id="fiscalYear" value="2024">
+                            <input type="number" id="fiscalYear" value="2026">
                         </div>
                         <div class="input-group">
                             <label>Período</label>
@@ -96,14 +114,14 @@
                         <i class="fas fa-microscope"></i> EXECUTAR ANÁLISE CRUZADA
                     </button>
                     <button id="resetBtn" class="btn-outline">
-                        <i class="fas fa-undo"></i> REINICIAR SISTEMA
+                        <i class="fas fa-trash-alt"></i> LIMPAR SESSÃO
                     </button>
                 </div>
 
                 <div class="session-info">
                     <div class="info-row">
                         <span>ID SESSÃO:</span>
-                        <span id="sessionID" class="mono-value">---</span>
+                        <span id="sessionID" class="mono-value">VDC-OFFLINE</span>
                     </div>
                     <div class="info-row">
                         <span>HASH MESTRE:</span>
@@ -114,11 +132,10 @@
         </aside>
 
         <main class="main-dashboard">
-            
             <header class="dashboard-header">
                 <div class="header-left">
                     <h2>PAINEL DE CONTROLO DE EVIDÊNCIAS</h2>
-                    <p class="subtitle">Cruzamento de dados SAF-T, Aplicações e Documentação Bancária</p>
+                    <p class="subtitle">Triangulação de Dados: SAF-T vs Aplicações vs Bancário</p>
                 </div>
                 <div class="header-right">
                     <div class="status-badge" id="systemStatus">
@@ -134,7 +151,7 @@
                     <div class="drop-zone-content">
                         <i class="fas fa-file-invoice-dollar"></i>
                         <h4>FICHEIROS SAF-T</h4>
-                        <p>Arraste ficheiros .xml aqui</p>
+                        <p>XML de faturação</p>
                         <div class="file-counter" id="count-saft">0 ficheiros</div>
                     </div>
                 </div>
@@ -144,7 +161,7 @@
                     <div class="drop-zone-content">
                         <i class="fas fa-university"></i>
                         <h4>EXTRATOS BANCÁRIOS</h4>
-                        <p>PDF ou CSV bancário</p>
+                        <p>PDF/CSV de conta profissional</p>
                         <div class="file-counter" id="count-statements">0 ficheiros</div>
                     </div>
                 </div>
@@ -153,57 +170,57 @@
                     <input type="file" id="file-invoices" multiple accept=".pdf" class="file-input">
                     <div class="drop-zone-content">
                         <i class="fas fa-receipt"></i>
-                        <h4>FATURAS / RELATÓRIOS APP</h4>
-                        <p>PDFs faturados pela App</p>
+                        <h4>RELATÓRIOS APP</h4>
+                        <p>Faturas e Ganhos da Plataforma</p>
                         <div class="file-counter" id="count-invoices">0 ficheiros</div>
                     </div>
                 </div>
 
                 <div class="drop-zone" id="drop-dac7" data-type="dac7">
-                    <input type="file" id="file-dac7" multiple accept=".pdf,.png,.jpg,.jpeg" class="file-input">
+                    <input type="file" id="file-dac7" multiple accept=".pdf" class="file-input">
                     <div class="drop-zone-content">
                         <i class="fas fa-shield-alt"></i>
                         <h4>DAC7 / OUTROS</h4>
-                        <p>Comprovativos e Printscreens</p>
+                        <p>Comprovativos de rendimento</p>
                         <div class="file-counter" id="count-dac7">0 ficheiros</div>
                     </div>
                 </div>
             </section>
 
             <section class="kpi-grid">
-                <div class="kpi-card" data-tooltip="Total bruto registado no SAF-T">
+                <div class="kpi-card" data-tooltip="Total bruto registado no sistema de faturação SAF-T">
                     <div class="kpi-icon saft-color"><i class="fas fa-file-invoice"></i></div>
                     <div class="kpi-data">
                         <span class="kpi-label">SAF-T BRUTO</span>
                         <h3 id="valSaft">0,00 €</h3>
-                        <span class="kpi-subtext" id="subSaft">0 ficheiros processados</span>
+                        <span class="kpi-subtext" id="subSaft">Aguarda ficheiros</span>
                     </div>
                 </div>
 
-                <div class="kpi-card" data-tooltip="Ganhos totais extraídos dos relatórios da aplicação">
+                <div class="kpi-card" data-tooltip="Ganhos totais reportados pela aplicação">
                     <div class="kpi-icon app-color"><i class="fas fa-mobile-alt"></i></div>
                     <div class="kpi-data">
-                        <span class="kpi-label">GANHOS APP</span>
+                        <span class="kpi-label">GANHOS REAIS APP</span>
                         <h3 id="valApp">0,00 €</h3>
-                        <span class="kpi-subtext" id="subApp">0 ficheiros processados</span>
+                        <span class="kpi-subtext" id="subApp">Aguarda ficheiros</span>
                     </div>
                 </div>
 
-                <div class="kpi-card" data-tooltip="Valor total de impostos/IVA identificados">
-                    <div class="kpi-icon tax-color"><i class="fas fa-percent"></i></div>
-                    <div class="kpi-data">
-                        <span class="kpi-label">COMISSÕES / IVA</span>
-                        <h3 id="valTax">0,00 €</h3>
-                        <span class="kpi-subtext" id="subTax">Calculado via algoritmos</span>
-                    </div>
-                </div>
-
-                <div class="kpi-card highlight" data-tooltip="Diferença absoluta entre SAF-T e Ganhos Reais">
+                <div class="kpi-card" data-tooltip="Diferença entre SAF-T e Ganhos Reais">
                     <div class="kpi-icon risk-color"><i class="fas fa-exclamation-triangle"></i></div>
                     <div class="kpi-data">
                         <span class="kpi-label">DISCREPÂNCIA</span>
                         <h3 id="valDiff">0,00 €</h3>
-                        <span class="kpi-subtext" id="subDiff">Margem de erro: 0%</span>
+                        <span class="kpi-subtext" id="subDiff">Desvio: 0%</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card highlight" data-tooltip="Estimativa de risco fiscal (RGIT)">
+                    <div class="kpi-icon quantum-color"><i class="fas fa-scale-balanced"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">ESTIMATIVA QUANTUM</span>
+                        <h3 id="valQuantum">0,00 €</h3>
+                        <span class="kpi-subtext">Cálculo 7 anos (Art. 103)</span>
                     </div>
                 </div>
             </section>
@@ -212,38 +229,36 @@
                 <div class="chart-container card-forensic">
                     <div class="card-header">
                         <h3><i class="fas fa-chart-line"></i> TENDÊNCIA E CRUZAMENTO</h3>
-                        <div class="chart-legend">
-                            <span class="legend-item"><i class="dot saft"></i> SAF-T</span>
-                            <span class="legend-item"><i class="dot app"></i> APP</span>
-                        </div>
                     </div>
-                    <canvas id="forensicChart"></canvas>
+                    <div class="canvas-wrapper">
+                        <canvas id="forensicChart"></canvas>
+                    </div>
                 </div>
 
                 <div class="log-container card-forensic">
                     <div class="card-header">
-                        <h3><i class="fas fa-terminal"></i> LOG DE AUDITORIA (VDC-CORE)</h3>
+                        <h3><i class="fas fa-terminal"></i> AUDIT LOG (VDC-CORE)</h3>
                         <button id="clearLog" class="btn-text">LIMPAR</button>
                     </div>
                     <div id="forensicLog" class="log-output">
-                        <div class="log-entry system">SISTEMA INICIALIZADO: AGUARDANDO EVIDÊNCIAS...</div>
+                        <div class="log-entry system">AGUARDANDO INÍCIO DE SESSÃO...</div>
                     </div>
                 </div>
             </section>
 
             <section id="resultSection" class="results-grid hidden">
                 <div class="verdict-card card-forensic">
-                    <h3>VEREDICTO DE RISCO</h3>
+                    <h3>VEREDICTO PERICIAL</h3>
                     <div id="verdictBadge" class="verdict-badge">PENDENTE</div>
-                    <p id="verdictDescription">Insira dados para gerar o parecer técnico automático.</p>
+                    <p id="verdictDescription">Processamento de dados necessário para parecer técnico.</p>
                 </div>
 
-                <div class="quantum-card card-forensic">
-                    <h3>ESTIMATIVA DE QUANTUM (Art. 103º RGIT)</h3>
-                    <div class="quantum-value" id="valQuantum">0,00 €</div>
-                    <p class="quantum-note">* Estimativa baseada na extrapolação de 7 anos conforme norma legal.</p>
+                <div class="actions-footer">
                     <button id="downloadReport" class="btn-secondary">
-                        <i class="fas fa-file-pdf"></i> GERAR PARECER TÉCNICO (PDF)
+                        <i class="fas fa-file-pdf"></i> GERAR PARECER TÉCNICO
+                    </button>
+                    <button id="openModalBtn" class="btn-outline">
+                        <i class="fas fa-box-open"></i> VER CONTENTOR DE EVIDÊNCIAS
                     </button>
                 </div>
             </section>
@@ -257,66 +272,26 @@
                 <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="file-list-container">
-                    <table class="forensic-table">
-                        <thead>
-                            <tr>
-                                <th>NOME DO FICHEIRO</th>
-                                <th>TIPO</th>
-                                <th>TAMANHO</th>
-                                <th>STATUS</th>
-                                <th>AÇÕES</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fileListBody">
-                            </tbody>
-                    </table>
-                </div>
-
-                <div class="summary-box">
-                    <h4>RESUMO DA CARGA</h4>
-                    <div class="summary-grid">
-                        <div class="summary-item">
-                            <span class="summary-label">SAF-T</span>
-                            <span id="summarySaft" class="summary-value">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">APP/FATURAS</span>
-                            <span id="summaryInvoices" class="summary-value">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">EXTRATOS</span>
-                            <span id="summaryStatements" class="summary-value">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">DAC7/OUTROS</span>
-                            <span id="summaryDac7" class="summary-value">0</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">TOTAL</span>
-                            <span id="summaryTotal" class="summary-value total">0</span>
-                        </div>
-                    </div>
-                </div>
+                <table class="forensic-table">
+                    <thead>
+                        <tr>
+                            <th>FICHEIRO</th>
+                            <th>CATEGORIA</th>
+                            <th>TAMANHO</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fileListBody"></tbody>
+                </table>
             </div>
             <div class="modal-footer">
-                <button id="closeAndSaveBtn" class="btn-primary">
-                    <i class="fas fa-check-circle"></i> SELAR EVIDÊNCIAS
-                </button>
+                <button id="closeModalBtn" class="btn-primary">FECHAR CONTENTOR</button>
             </div>
         </div>
     </div>
 
     <div id="toastContainer"></div>
 
-    <script>
-        // Inicialização global para PDF.js
-        window.pdfjsLib = window['pdfjs-dist/build/pdf'];
-        if (window.pdfjsLib) {
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
-    </script>
     <script src="script.js"></script>
-
 </body>
 </html>
